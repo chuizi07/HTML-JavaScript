@@ -1,0 +1,77 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow: hidden;
+  background: #000;
+}
+
+.section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a0a2e, #2d1b69, #1a0a2e);
+}
+/* 生日蛋糕蜡烛效果边框 */
+.section::before {
+  content: "";
+  position: absolute;
+  width: 25vw;
+  height: 25vw;
+  border: 4vw solid #ff6b9d;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1vw #1a0a2e, 0 0 0 1.3vw #ffd700,
+              0 0 60px rgba(255, 107, 157, 0.5),
+              0 0 120px rgba(255, 215, 0, 0.3);
+}
+.section .section__title {
+  position: absolute;
+  transform: skewY(-5deg);
+  z-index: 10;
+  background: linear-gradient(90deg, #ffd700, #ff6b9d, #fff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: floating 4s ease-in-out infinite;
+  text-align: center;
+  font-size: 8vw;
+  line-height: 2em;
+  filter: drop-shadow(0 0 10px rgba(255, 107, 157, 0.5))
+          drop-shadow(0 0 20px rgba(255, 215, 0, 0.3))
+          drop-shadow(3px 3px 0 rgba(0,0,0,0.5));
+}
+.section .section__title span {
+  background: linear-gradient(90deg, #ff6b9d, #ffd700, #fff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  font-size: 2.5em;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5))
+          drop-shadow(0 0 20px rgba(255, 107, 157, 0.3))
+          drop-shadow(3px 3px 0 rgba(0,0,0,0.3));
+}
+.section i {
+  position: absolute;
+  background: #ffd700;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ffd700, 0 0 20px #ff6b9d,
+              0 0 40px #ffd700, 0 0 80px #ff6b9d;
+  animation: animate linear infinite;
+}
+
+@keyframes floating {
+  0%, 100% { transform: skewY(-5deg) translate(0, -20px); }
+  50% { transform: skewY(-5deg) translate(0, 20px); }
+}
+@keyframes animate {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
+}

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Happy New Year!</title>
+<style>
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+#canvas {
+  width: 100%;
+  height: 100%;
+}
+#title {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.3);
+  font-family: sans-serif;
+  font-size: 14px;
+  pointer-events: none;
+  user-select: none;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div id="title">点击屏幕发射烟花</div>
+<script>
+var pi = Math.PI;
+var ctx = canvas.getContext("2d");
+var cx, cy;
+
+function resize() {
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
+  cx = canvas.width / 2;
+  cy = canvas.height / 2;
+}
+resize();
+window.addEventListener("resize", resize);
+
+var playerZ = -25;
+var playerX = 0, playerY = 0;
+var playerVX = 0, playerVY = 0, playerVZ = 0;
+var pitch = 0, yaw = 0, pitchV = 0, yawV = 0;
+var scale = 600;
+var gravity = 0.02;
+var seedTimer = 0;
+var seedInterval = 5;
+var seedLife = 100;
+var frames = 0;
+var seeds = [];
+var sparks = [];
+
+// 用canvas绘制烟花粒子形状，替代外部图片
+var sparkColors = [
+  { fill: "#ff4444", glow: "#ff8888" },
+  { fill: "#ffaa22", glow: "#ffdd88" },
+  { fill: "#44aaff", glow: "#88ccff" },
+  { fill: "#ffffff", glow: "#ffffff" },
+  { fill: "#44ff88", glow: "#88ffbb" },
+  { fill: "#ff44aa", glow: "#ff88cc" },
+  { fill: "#aa44ff", glow: "#cc88ff" },
+  { fill: "#ffdd44", glow: "#ffee88" },
+  { fill: "#44ffff", glow: "#88ffff" },
+  { fill: "#ff6644", glow: "#ffaa88" }
+];
+
+// 绘制粒子到离屏canvas
+function createSparkCanvas(color) {
+  var offscreen = document.createElement("canvas");
+  offscreen.width = 64;
+  offscreen.height = 64;
+  var octx = offscreen.getContext("2d");
+  var grad = octx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  grad.addStop(0, color.glow);
+  grad.addStop(0.3, color.fill);
+  grad.addStop(1, "rgba(0,0,0,0)");
+  octx.fillStyle = grad;
+  octx.beginPath();
+  octx.arc(32, 32, 32, 0, pi * 2);
+  octx.fill();
+  // 中心亮点
+  octx.fillStyle = "rgba(255,255,255,0.8)";
+  octx.beginPath();
+  octx.arc(32, 32, 4, 0, pi * 2);
+  octx.fill();
+  return offscreen;
+}
+
+var sparkPics = [];
+for (var i = 0; i < sparkColors.length; i++) {
+  sparkPics.push(createSparkCanvas(sparkColors[i]));
+}
+
+function rasterizePoint(x, y, z) {
+  x -= playerX;
+  y -= playerY;
+  z -= playerZ;
+  var p = Math.atan2(x, z);
+  var d = Math.sqrt(x * x + z * z);
+  x = Math.sin(p - yaw) * d;
+  z = Math.cos(p - yaw) * d;
+  p = Math.atan2(y, z);
+  d = Math.sqrt(y * y + z * z);
+  y = Math.sin(p - pitch) * d;
+  z = Math.cos(p - pitch) * d;
+  var rx1 = -1000, ry1 = 1, rx2 = 1000, ry2 = 1, rx3 = 0, ry3 = 0, rx4 = x, ry4 = z;
+  var uc = (ry4 - ry3) * (rx2 - rx1) - (rx4 - rx3) * (ry2 - ry1);
+  if (!uc) return { x: 0, y: 0, d: -1 };
+  var ua = ((rx4 - rx3) * (ry1 - ry3) - (ry4 - ry3) * (rx1 - rx3)) / uc;
+  var ub = ((rx2 - rx1) * (ry1 - ry3) - (ry2 - ry1) * (rx1 - rx3)) / uc;
+  if (!z) z = 0.000000001;
+  var screenX = cx + (rx1 + ua * (rx2 - rx1)) * scale;
+  var screenY = cy + (y / z) * scale;
+  return { x: screenX, y: screenY, d: Math.sqrt(x * x + y * y + z * z) };
+}
+
+function spawnSeed() {
+  var seed = {
+    x: -50 + Math.random() * 100,
+    y: 25,
+    z: -50 + Math.random() * 100,
+    vx: 0.1 - Math.random() * 0.2,
+    vy: -1.5 * (1 + Math.random() / 2),
+    vz: 0.1 - Math.random() * 0.2,
+    born: frames,
+    hue: Math.random() * 360
+  };
+  seeds.push(seed);
+}
+
+function splode(x, y, z) {
+  var t = 5 + Math.floor(Math.random() * 150);
+  var sparkV = 1 + Math.random() * 2.5;
+  var type = Math.floor(Math.random() * 3);
+  var pic1, pic2, pic3;
+  switch (type) {
+    case 0:
+      pic1 = Math.floor(Math.random() * sparkPics.length);
+      break;
+    case 1:
+      pic1 = Math.floor(Math.random() * sparkPics.length);
+      do { pic2 = Math.floor(Math.random() * sparkPics.length); } while (pic2 === pic1);
+      break;
+    case 2:
+      pic1 = Math.floor(Math.random() * sparkPics.length);
+      do { pic2 = Math.floor(Math.random() * sparkPics.length); } while (pic2 === pic1);
+      do { pic3 = Math.floor(Math.random() * sparkPics.length); } while (pic3 === pic1 || pic3 === pic2);
+      break;
+  }
+
+  for (var m = 0; m < t; m++) {
+    var spark = {
+      x: x, y: y, z: z,
+      p1: pi * 2 * Math.random(),
+      p2: pi * Math.random(),
+      v: sparkV * (1 + Math.random() / 6),
+      trail: [],
+      radius: 25 + Math.random() * 50,
+      alpha: 1,
+      img: null
+    };
+    spark.vx = Math.sin(spark.p1) * Math.sin(spark.p2) * spark.v;
+    spark.vz = Math.cos(spark.p1) * Math.sin(spark.p2) * spark.v;
+    spark.vy = Math.cos(spark.p2) * spark.v;
+    switch (type) {
+      case 0: spark.img = sparkPics[pic1]; break;
+      case 1: spark.img = sparkPics[Math.random() < 0.5 ? pic1 : pic2]; break;
+      case 2:
+        var r = Math.random();
+        spark.img = r < 0.33 ? sparkPics[pic1] : r < 0.66 ? sparkPics[pic2] : sparkPics[pic3];
+        break;
+    }
+    sparks.push(spark);
+  }
+}
+
+function doLogic() {
+  if (seedTimer < frames) {
+    seedTimer = frames + seedInterval * Math.random() * 10;
+    spawnSeed();
+  }
+  for (var i = seeds.length - 1; i >= 0; i--) {
+    var s = seeds[i];
+    s.vy += gravity;
+    s.x += s.vx;
+    s.y += s.vy;
+    s.z += s.vz;
+    if (frames - s.born > seedLife) {
+      splode(s.x, s.y, s.z);
+      seeds.splice(i, 1);
+    }
+  }
+  for (var i = sparks.length - 1; i >= 0; i--) {
+    var sp = sparks[i];
+    if (sp.alpha > 0 && sp.radius > 5) {
+      sp.alpha -= 0.008;
+      sp.radius /= 1.015;
+      sp.vy += gravity;
+      var point = { x: sp.x, y: sp.y, z: sp.z };
+      if (sp.trail.length) {
+        var last = sp.trail[sp.trail.length - 1];
+        var d = (point.x - last.x) * (point.x - last.x) +
+                (point.y - last.y) * (point.y - last.y) +
+                (point.z - last.z) * (point.z - last.z);
+        if (d > 9) sp.trail.push(point);
+      } else {
+        sp.trail.push(point);
+      }
+      if (sp.trail.length > 5) sp.trail.splice(0, 1);
+      sp.x += sp.vx;
+      sp.y += sp.vy;
+      sp.z += sp.vz;
+      sp.vx /= 1.075;
+      sp.vy /= 1.075;
+      sp.vz /= 1.075;
+    } else {
+      sparks.splice(i, 1);
+    }
+  }
+  // 摄像机微动
+  var p = Math.atan2(playerX, playerZ);
+  var dist = Math.sqrt(playerX * playerX + playerZ * playerZ);
+  dist += Math.sin(frames / 80) / 1.25;
+  var t = Math.sin(frames / 200) / 40;
+  playerX = Math.sin(p + t) * dist;
+  playerZ = Math.cos(p + t) * dist;
+  yaw = pi + p + t;
+}
+
+function draw() {
+  ctx.clearRect(0, 0, cx * 2, cy * 2);
+
+  // 地面网格
+  ctx.fillStyle = "#ff8";
+  for (var i = -100; i < 100; i += 3) {
+    for (var j = -100; j < 100; j += 4) {
+      var point = rasterizePoint(i, 25, j);
+      if (point.d !== -1) {
+        var size = 250 / (1 + point.d);
+        var groundDist = Math.sqrt(i * i + j * j);
+        var a = 0.75 - Math.pow(groundDist / 100, 6) * 0.75;
+        if (a > 0) {
+          ctx.globalAlpha = a;
+          ctx.fillRect(point.x - size / 2, point.y - size / 2, size, size);
+        }
+      }
+    }
+  }
+  ctx.globalAlpha = 1;
+
+  // 升空的种子
+  for (var i = 0; i < seeds.length; i++) {
+    var point = rasterizePoint(seeds[i].x, seeds[i].y, seeds[i].z);
+    if (point.d !== -1) {
+      var size = 200 / (1 + point.d);
+      ctx.fillStyle = "hsl(" + (seeds[i].hue % 360) + ", 100%, 80%)";
+      ctx.fillRect(point.x - size / 2, point.y - size / 2, size, size);
+    }
+  }
+
+  // 火花粒子
+  for (var i = 0; i < sparks.length; i++) {
+    var sp = sparks[i];
+    var point = rasterizePoint(sp.x, sp.y, sp.z);
+    if (point.d !== -1 && point.d > 0) {
+      var size = (sp.radius * 200) / (1 + point.d);
+      if (sp.alpha < 0) sp.alpha = 0;
+      if (size > 0 && sp.alpha > 0.01) {
+        ctx.globalAlpha = sp.alpha;
+        ctx.drawImage(sp.img, point.x - size / 2, point.y - size / 2, size, size);
+      }
+
+      // 绘制拖尾
+      if (sp.trail.length > 1) {
+        for (var j = sp.trail.length - 1; j >= 0; j--) {
+          var point2 = rasterizePoint(sp.trail[j].x, sp.trail[j].y, sp.trail[j].z);
+          if (point2.d !== -1) {
+            ctx.globalAlpha = ((j / sp.trail.length) * sp.alpha) / 2;
+            ctx.strokeStyle = "hsl(" + (sparks.length > 0 ? (i * 37 % 360) : 50) + ", 100%, 70%)";
+            ctx.lineWidth = 1 + (sp.radius * 10) / (sp.trail.length - j) / (1 + point2.d);
+            ctx.beginPath();
+            if (j === sp.trail.length - 1) {
+              ctx.moveTo(point2.x, point2.y);
+            } else {
+              var point3 = rasterizePoint(sp.trail[j + 1].x, sp.trail[j + 1].y, sp.trail[j + 1].z);
+              if (point3.d !== -1) ctx.moveTo(point3.x, point3.y);
+              ctx.lineTo(point2.x, point2.y);
+            }
+            ctx.stroke();
+          }
+        }
+      }
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+
+function frame() {
+  if (frames > 100000) {
+    seedTimer = 0;
+    frames = 0;
+  }
+  frames++;
+  draw();
+  doLogic();
+  requestAnimationFrame(frame);
+}
+
+// 点击发射额外烟花
+canvas.addEventListener("click", function(e) {
+  var rect = canvas.getBoundingClientRect();
+  var clickX = e.clientX - rect.left;
+  var clickY = e.clientY - rect.top;
+  // 将屏幕坐标近似转换为3D坐标
+  var worldX = (clickX - cx) / scale * 50;
+  var worldY = -(clickY - cy) / scale * 50;
+  var seed = {
+    x: worldX,
+    y: 25,
+    z: worldY,
+    vx: 0,
+    vy: -2,
+    vz: 0,
+    born: frames - seedLife + 20,
+    hue: Math.random() * 360
+  };
+  seeds.push(seed);
+});
+
+frame();
+</script>
+</body>
+</html>

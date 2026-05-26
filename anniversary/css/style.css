@@ -1,0 +1,483 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0a0a1a;
+  color: #fff;
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── 密码页面 ── */
+.password-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #0a0a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s, visibility 0.8s;
+}
+.password-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.password-card {
+  text-align: center;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 107, 157, 0.2);
+  border-radius: 24px;
+  backdrop-filter: blur(10px);
+  width: 320px;
+}
+
+.lock-icon {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 20px;
+}
+
+.lock-title {
+  font-size: 1.2em;
+  font-weight: 400;
+  color: #ddd;
+  margin-bottom: 24px;
+}
+
+.password-dots {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 215, 0, 0.5);
+  transition: all 0.2s;
+}
+.dot.filled {
+  background: #ffd700;
+  border-color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+.dot.error {
+  border-color: #ff4444;
+  background: #ff4444;
+  box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+}
+
+.password-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.key {
+  padding: 14px;
+  border: 1px solid rgba(255, 107, 157, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ddd;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.key:hover {
+  background: rgba(255, 107, 157, 0.15);
+  border-color: rgba(255, 107, 157, 0.4);
+  color: #fff;
+}
+.key:active {
+  transform: scale(0.95);
+}
+.key-clear,
+.key-delete {
+  font-size: 0.85em;
+  color: #888;
+}
+.key-clear:hover,
+.key-delete:hover {
+  color: #ff6b9d;
+}
+
+.password-hint {
+  font-size: 0.8em;
+  color: #444;
+}
+
+/* ── 音乐控制按钮 ── */
+.music-btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 999;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 107, 157, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ff6b9d;
+  transition: all 0.3s;
+  backdrop-filter: blur(10px);
+}
+.music-btn:hover {
+  background: rgba(255, 107, 157, 0.2);
+  border-color: rgba(255, 107, 157, 0.6);
+  color: #ffd700;
+}
+.music-btn.playing {
+  animation: musicSpin 3s linear infinite;
+  color: #ffd700;
+  border-color: rgba(255, 215, 0, 0.5);
+  background: rgba(255, 215, 0, 0.15);
+}
+@keyframes musicSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ── 爱心粒子背景 ── */
+#hearts {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── 通用 ── */
+section {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+h2 {
+  font-size: 2.5em;
+  margin-bottom: 40px;
+  background: linear-gradient(90deg, #ffd700, #ff6b9d, #fff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── 第一屏：主视觉 ── */
+.hero {
+  background: radial-gradient(ellipse at center, rgba(45, 27, 105, 0.5) 0%, transparent 70%);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+.hearts-logo {
+  width: 120px;
+  height: 80px;
+}
+
+.couple-names {
+  font-size: 4em;
+  font-weight: 300;
+  letter-spacing: 8px;
+}
+.couple-names .name {
+  background: linear-gradient(90deg, #ffd700, #ff6b9d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.couple-names .amp {
+  color: #ff6b9d;
+  margin: 0 10px;
+  font-size: 0.7em;
+}
+
+.wedding-date {
+  font-size: 1.2em;
+  color: #aaa;
+  letter-spacing: 4px;
+  margin-top: 10px;
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  animation: bounce 2s infinite;
+}
+.scroll-hint .arrow {
+  width: 20px; height: 20px;
+  border-right: 2px solid #ff6b9d;
+  border-bottom: 2px solid #ff6b9d;
+  transform: rotate(45deg);
+  margin: 10px auto 0;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+
+/* ── 第二屏：在一起的天数 ── */
+.timer-section {
+  background: linear-gradient(180deg, transparent, rgba(45, 27, 105, 0.3), transparent);
+}
+
+.timer-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.timer-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 107, 157, 0.2);
+  border-radius: 16px;
+  padding: 30px 40px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  min-width: 140px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.timer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(255, 107, 157, 0.2);
+}
+
+.timer-card .number {
+  display: block;
+  font-size: 3.5em;
+  font-weight: 700;
+  background: linear-gradient(90deg, #ffd700, #ff6b9d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.timer-card .label {
+  font-size: 1.1em;
+  color: #888;
+}
+
+.timer-subtitle {
+  margin-top: 30px;
+  color: #666;
+  font-size: 1em;
+  letter-spacing: 2px;
+}
+
+/* ── 第三屏：爱的时间线 ── */
+.timeline-section {
+  background: linear-gradient(180deg, transparent, rgba(45, 27, 105, 0.2), transparent);
+}
+
+.timeline {
+  position: relative;
+  max-width: 800px;
+  padding: 20px 0;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #ffd700, #ff6b9d, #ffd700);
+  transform: translateX(-50%);
+}
+
+.timeline-item {
+  position: relative;
+  width: 50%;
+  padding: 10px 40px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s, transform 0.6s;
+}
+.timeline-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.timeline-item.left { left: 0; text-align: right; }
+.timeline-item.right { left: 50%; text-align: left; }
+
+.timeline-item::before {
+  content: "♥";
+  position: absolute;
+  top: 20px;
+  width: 30px; height: 30px;
+  background: #ff6b9d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 30px;
+  box-shadow: 0 0 15px rgba(255, 107, 157, 0.5);
+}
+.timeline-item.left::before { right: -15px; }
+.timeline-item.right::before { left: -15px; }
+
+.timeline-item .content {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 107, 157, 0.15);
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(5px);
+}
+.timeline-item .content .date {
+  font-size: 0.9em;
+  color: #ffd700;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.timeline-item .content h3 {
+  font-size: 1.3em;
+  margin-bottom: 8px;
+  color: #ff6b9d;
+}
+.timeline-item .content p {
+  color: #aaa;
+  font-size: 0.95em;
+  line-height: 1.6;
+}
+
+/* ── 第四屏：爱的留言板 ── */
+.message-section {
+  background: linear-gradient(180deg, transparent, rgba(45, 27, 105, 0.2), transparent);
+}
+
+.message-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 107, 157, 0.2);
+  border-radius: 20px;
+  padding: 60px 50px;
+  max-width: 600px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+.message-card .envelope-icon {
+  font-size: 3em;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 10px rgba(255, 107, 157, 0.5));
+}
+.message-card .message-content {
+  margin-top: 30px;
+}
+.message-card .message-content p {
+  font-size: 1.1em;
+  line-height: 2;
+  color: #ddd;
+}
+.message-card .signature {
+  margin-top: 30px;
+  color: #ff6b9d;
+  font-style: italic;
+}
+
+/* ── 第五屏：纪念日倒计时 ── */
+.countdown-section {
+  background: linear-gradient(180deg, transparent, rgba(45, 27, 105, 0.3));
+}
+
+.next-anniversary {
+  text-align: center;
+}
+
+.date-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+.date-display .month,
+.date-display .day,
+.date-display .year {
+  font-size: 2.5em;
+  font-weight: 700;
+  background: linear-gradient(90deg, #ffd700, #ff6b9d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.date-display .day {
+  font-size: 4em;
+  color: #fff;
+  background: linear-gradient(90deg, #ff6b9d, #fff, #ffd700);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.countdown-label {
+  color: #888;
+  font-size: 1.1em;
+  margin-bottom: 30px;
+}
+
+.countdown-grid {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.countdown-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  padding: 20px 30px;
+  text-align: center;
+  min-width: 110px;
+}
+.countdown-card .number {
+  display: block;
+  font-size: 2.5em;
+  font-weight: 700;
+  color: #ffd700;
+}
+.countdown-card .label {
+  font-size: 0.9em;
+  color: #888;
+}
+
+/* ── 响应式 ── */
+@media (max-width: 768px) {
+  .couple-names { font-size: 2.5em; }
+  .timer-card { min-width: 100px; padding: 20px; }
+  .timer-card .number { font-size: 2.5em; }
+
+  .timeline::before { left: 20px; }
+  .timeline-item { width: 100%; left: 0 !important; padding-left: 50px; padding-right: 10px; text-align: left !important; }
+  .timeline-item::before { left: 5px !important; right: auto !important; }
+
+  .message-card { margin: 20px; padding: 40px 30px; }
+}

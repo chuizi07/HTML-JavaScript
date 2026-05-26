@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>实现黑客帝国矩阵雨效果</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: black;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+var c = document.getElementById("c");
+var ctx = c.getContext("2d");
+
+c.height = window.innerHeight;
+c.width = window.innerWidth;
+
+var font_size = 14;
+var columns = Math.floor(c.width / font_size);
+var drops = [];
+for (var i = 0; i < columns; i++) drops[i] = Math.random() * -100;
+
+// 扩展字符集：汉字 + 片假名 + 数字 + 拉丁字母
+var chars = "田由甲申甴电甶男甸甹町画甼甾甿畀畁畂畃畄畅畆畇畈畉畊畋界畍畎畏畐畑アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+// 首列高亮的雨滴颜色（白色/亮绿色）
+function draw() {
+  ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+  ctx.fillRect(0, 0, c.width, c.height);
+
+  ctx.font = font_size + "px monospace";
+
+  for (var i = 0; i < drops.length; i++) {
+    var text = chars[Math.floor(Math.random() * chars.length)];
+    var x = i * font_size;
+    var y = drops[i] * font_size;
+
+    // 雨滴头部用白色高亮
+    if (y > 0) {
+      ctx.fillStyle = "#fff";
+      ctx.fillText(text, x, y);
+      // 上面一个字符用绿色
+      ctx.fillStyle = "#0F0";
+      ctx.fillText(chars[Math.floor(Math.random() * chars.length)], x, y - font_size);
+    }
+
+    if (y > c.height && Math.random() > 0.975) {
+      drops[i] = Math.random() * -20;
+    }
+
+    drops[i]++;
+  }
+}
+
+var animId;
+function animate() {
+  animId = requestAnimationFrame(animate);
+  draw();
+}
+
+window.addEventListener("resize", function() {
+  c.height = window.innerHeight;
+  c.width = window.innerWidth;
+  columns = Math.floor(c.width / font_size);
+  var oldDrops = drops;
+  drops = [];
+  for (var i = 0; i < columns; i++) {
+    drops[i] = i < oldDrops.length ? oldDrops[i] : Math.random() * -100;
+  }
+});
+
+animate();
+</script>
+</body>
+</html>

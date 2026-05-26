@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>特效项目合集</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; font-family: "Microsoft YaHei", sans-serif; background: #1a1a2e; color: #e0e0e0; }
+
+  /* ── sidebar ── */
+  #sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 240px; background: #16213e; overflow-y: auto;
+    border-right: 1px solid #0f3460; z-index: 100;
+    transition: transform 0.3s;
+  }
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-thumb { background: #0f3460; border-radius: 2px; }
+
+  #sidebar h2 {
+    padding: 20px 16px 12px; font-size: 18px; color: #e94560;
+    border-bottom: 1px solid #0f3460; letter-spacing: 2px;
+    position: sticky; top: 0; background: #16213e; z-index: 1;
+  }
+
+  .category {
+    padding: 8px 16px 4px; font-size: 11px; color: #667;
+    text-transform: uppercase; letter-spacing: 1px; margin-top: 8px;
+  }
+
+  .menu-item {
+    display: block; width: 100%; padding: 10px 16px;
+    background: none; border: none; color: #b0b0b0;
+    font-size: 14px; text-align: left; cursor: pointer;
+    transition: all 0.2s; border-left: 3px solid transparent;
+    font-family: inherit;
+  }
+  .menu-item:hover {
+    background: #1a1a40; color: #fff; border-left-color: #e94560;
+  }
+  .menu-item.active {
+    background: #0f3460; color: #e94560; border-left-color: #e94560; font-weight: bold;
+  }
+
+  /* ── main area ── */
+  #main {
+    margin-left: 240px; height: 100%; position: relative;
+  }
+  #main iframe {
+    width: 100%; height: 100%; border: none; display: block;
+  }
+
+  /* ── welcome screen ── */
+  #welcome {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; height: 100%; color: #555;
+  }
+  #welcome h1 { font-size: 36px; color: #e94560; margin-bottom: 16px; }
+  #welcome p { font-size: 16px; }
+
+  /* ── toggle button ── */
+  #toggle {
+    position: fixed; top: 12px; left: 12px; z-index: 200;
+    width: 36px; height: 36px; border: none; border-radius: 6px;
+    background: #16213e; color: #e94560; font-size: 20px;
+    cursor: pointer; display: none; align-items: center;
+    justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  /* ── responsive ── */
+  @media (max-width: 768px) {
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0; }
+    #toggle { display: flex; }
+    #sidebar.open ~ #main { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<button id="toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+
+<nav id="sidebar">
+  <h2>特效合集</h2>
+
+  <div class="category">烟花 / 粒子</div>
+  <button class="menu-item" data-src="3d-fireworks/index.html">3D 烟花动画</button>
+  <button class="menu-item" data-src="fireworks/index.html">烟花动画</button>
+  <button class="menu-item" data-src="fireworks-pro/index.html">炫酷烟花特效</button>
+  <button class="menu-item" data-src="particle-cosmos/index.html">粒子宇宙星云</button>
+  <button class="menu-item" data-src="particle-text/index.html">粒子文字动画</button>
+  <button class="menu-item" data-src="triangle-particle-3d/index.html">三角形粒子 3D 旋转</button>
+  <button class="menu-item" data-src="net-particle-lines/index.html">网状线条粒子</button>
+  <button class="menu-item" data-src="cursor-geometry/index.html">鼠标跟随几何</button>
+  <button class="menu-item" data-src="matrix-rain/index.html">矩阵雨</button>
+
+  <div class="category">爱心 / 情感</div>
+  <button class="menu-item" data-src="anniversary/index.html">结婚纪念日</button>
+  <button class="menu-item" data-src="anniversary-four-year/index.html">四周年纪念日</button>
+  <button class="menu-item" data-src="anniversary-tree/index.html">爱情树</button>
+  <button class="menu-item" data-src="birthday/index.html">生日快乐</button>
+  <button class="menu-item" data-src="valentine-heart/index.html">七夕爱心表白</button>
+  <button class="menu-item" data-src="heart-bg/index.html">爱心背景特效</button>
+  <button class="menu-item" data-src="heart-wave/index.html">爱心层叠波浪</button>
+  <button class="menu-item" data-src="floating-hearts/index.html">满屏漂浮爱心</button>
+
+  <div class="category">卡片 / 交互</div>
+  <button class="menu-item" data-src="card-3d-hover/index.html">3D 卡片悬停</button>
+  <button class="menu-item" data-src="card-flip/index.html">卡片翻转</button>
+  <button class="menu-item" data-src="card-expand/index.html">卡片详情展开</button>
+  <button class="menu-item" data-src="clip-path-hover/index.html">图片剪辑路径</button>
+  <button class="menu-item" data-src="magnifier/index.html">放大镜效果</button>
+
+  <div class="category">手风琴 / 导航</div>
+  <button class="menu-item" data-src="accordion-card/index.html">手风琴布局卡片</button>
+  <button class="menu-item" data-src="accordion-slider/index.html">层叠式手风琴切换</button>
+  <button class="menu-item" data-src="nav-hover-menu/index.html">导航菜单悬停</button>
+  <button class="menu-item" data-src="responsive-nav/index.html">响应式导航栏</button>
+
+  <div class="category">动画 / 特效</div>
+  <button class="menu-item" data-src="fire-text/index.html">火焰文字</button>
+  <button class="menu-item" data-src="split-text-hover/index.html">悬停拆分文字</button>
+  <button class="menu-item" data-src="birthday/index.html">生日快乐</button>
+  <button class="menu-item" data-src="new-year-2023/index.html">2023 新年动画</button>
+  <button class="menu-item" data-src="flower-animation/index.html">抽象花蕊动画</button>
+  <button class="menu-item" data-src="bouncing-balls/index.html">碰碰球动画</button>
+  <button class="menu-item" data-src="sky-geese/index.html">大海蓝天雁飞过</button>
+  <button class="menu-item" data-src="joint-stretch/index.html">人物关节拉伸</button>
+  <button class="menu-item" data-src="cup-3d/index.html">3D 立体杯子</button>
+  <button class="menu-item" data-src="clock/index.html">圆盘时钟</button>
+  <button class="menu-item" data-src="countdown-alert/index.html">倒计时警报灯</button>
+  <button class="menu-item" data-src="slider-transition/index.html">滑块切换过渡</button>
+
+  <div class="category">表单 / 工具</div>
+  <button class="menu-item" data-src="form-validation/index.html">表单实时验证</button>
+  <button class="menu-item" data-src="form-validator/index.html">表单验证插件</button>
+  <button class="menu-item" data-src="calendar-widget/index.html">日历控件</button>
+  <button class="menu-item" data-src="lightbox-gallery/index.html">弹出式相册放大</button>
+
+  <div class="category">404 页面</div>
+  <button class="menu-item" data-src="404page/text-drop/index.html">404 文字掉落</button>
+  <button class="menu-item" data-src="404page/noise-shake/index.html">404 黑白点抖动</button>
+</nav>
+
+<div id="main">
+  <div id="welcome">
+    <h1>特效项目合集</h1>
+    <p>← 点击左侧菜单查看效果</p>
+  </div>
+</div>
+
+<script>
+(function() {
+  var main = document.getElementById('main');
+  var welcome = document.getElementById('welcome');
+  var items = document.querySelectorAll('.menu-item');
+
+  items.forEach(function(item) {
+    item.addEventListener('click', function() {
+      // update active state
+      items.forEach(function(el) { el.classList.remove('active'); });
+      this.classList.add('active');
+
+      // load iframe
+      if (welcome) { welcome.style.display = 'none'; }
+      var old = main.querySelector('iframe');
+      if (old) old.remove();
+
+      var iframe = document.createElement('iframe');
+      iframe.src = this.getAttribute('data-src');
+      iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
+      main.appendChild(iframe);
+
+      // close sidebar on mobile
+      document.getElementById('sidebar').classList.remove('open');
+    });
+  });
+})();
+</script>
+</body>
+</html>

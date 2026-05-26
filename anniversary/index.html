@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我们的纪念日</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- 密码遮罩层 -->
+<div class="password-screen" id="passwordScreen">
+  <div class="password-card">
+    <svg class="lock-icon" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="25" width="40" height="30" rx="5" stroke="url(#lockGrad)" stroke-width="2" fill="none"/>
+      <path d="M20 25 L20 18 Q20 10, 30 10 Q40 10, 40 18 L40 25" stroke="url(#lockGrad)" stroke-width="2" fill="none"/>
+      <circle cx="30" cy="40" r="3" fill="#ffd700"/>
+      <line x1="30" y1="43" x2="30" y2="48" stroke="#ffd700" stroke-width="2"/>
+      <defs>
+        <linearGradient id="lockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ffd700"/>
+          <stop offset="100%" stop-color="#ff6b9d"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <h2 class="lock-title">输入密码进入</h2>
+    <div class="password-dots" id="dots">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+    <div class="password-keypad">
+      <button class="key" data-key="1">1</button>
+      <button class="key" data-key="2">2</button>
+      <button class="key" data-key="3">3</button>
+      <button class="key" data-key="4">4</button>
+      <button class="key" data-key="5">5</button>
+      <button class="key" data-key="6">6</button>
+      <button class="key" data-key="7">7</button>
+      <button class="key" data-key="8">8</button>
+      <button class="key" data-key="9">9</button>
+      <button class="key key-clear" data-key="clear">清除</button>
+      <button class="key" data-key="0">0</button>
+      <button class="key key-delete" data-key="delete">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.12c.36.53.9.88 1.59.88h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7.07L2.4 12l4.66-7H22v14zm-11.59-2L14 13.41 17.59 17 19 15.59 15.41 12 19 8.41 17.59 7 14 10.59 10.41 7 9 8.41 12.59 12 9 15.59z" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+    <p class="password-hint">密码：1122</p>
+  </div>
+</div>
+
+<!-- 爱心粒子背景 -->
+<canvas id="hearts"></canvas>
+
+<!-- 音乐控制按钮 -->
+<div class="music-btn" id="musicBtn" title="播放/暂停音乐">
+  <svg viewBox="0 0 24 24" width="24" height="24">
+    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55C7.79 13 6 14.79 6 17s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" fill="currentColor"/>
+  </svg>
+</div>
+
+<!-- 第一屏：主视觉 -->
+<section class="hero">
+  <div class="logo">
+    <svg class="hearts-logo" viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="leftHeart" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ffd700"/>
+          <stop offset="100%" stop-color="#ffb347"/>
+        </linearGradient>
+        <linearGradient id="rightHeart" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ff6b9d"/>
+          <stop offset="100%" stop-color="#ff69b4"/>
+        </linearGradient>
+      </defs>
+      <!-- 左爱心 -->
+      <g>
+        <animateTransform attributeName="transform" type="translate" values="-15,0;0,0;-15,0" dur="4s" repeatCount="indefinite"/>
+        <path d="M52 58 C36 46, 22 34, 30 20 C34 13, 44 10, 52 18 C60 10, 70 13, 74 20 C82 34, 68 46, 52 58Z" fill="url(#leftHeart)" opacity="0.85"/>
+      </g>
+      <!-- 右爱心 -->
+      <g>
+        <animateTransform attributeName="transform" type="translate" values="15,0;0,0;15,0" dur="4s" repeatCount="indefinite"/>
+        <path d="M68 58 C84 46, 98 34, 90 20 C86 13, 76 10, 68 18 C60 10, 50 13, 46 20 C38 34, 52 46, 68 58Z" fill="url(#rightHeart)" opacity="0.85"/>
+      </g>
+    </svg>
+  </div>
+  <h1 class="couple-names">
+    <span class="name">锤子</span>
+    <span class="amp">&</span>
+    <span class="name">青子</span>
+  </h1>
+  <p class="wedding-date">2023 年 6 月 18 日</p>
+  <div class="scroll-hint">
+    <span>向下滚动</span>
+    <div class="arrow"></div>
+  </div>
+</section>
+
+<!-- 第二屏：在一起的天数 -->
+<section class="timer-section" id="timer">
+  <h2>我们已经在一起</h2>
+  <div class="timer-grid">
+    <div class="timer-card">
+      <span class="number" id="days">0</span>
+      <span class="label">天</span>
+    </div>
+    <div class="timer-card">
+      <span class="number" id="hours">0</span>
+      <span class="label">时</span>
+    </div>
+    <div class="timer-card">
+      <span class="number" id="minutes">0</span>
+      <span class="label">分</span>
+    </div>
+    <div class="timer-card">
+      <span class="number" id="seconds">0</span>
+      <span class="label">秒</span>
+    </div>
+  </div>
+  <p class="timer-subtitle">每一秒都值得铭记</p>
+</section>
+
+<!-- 第三屏：爱的时间线 -->
+<section class="timeline-section">
+  <h2>我们的故事</h2>
+  <div class="timeline">
+    <div class="timeline-item left">
+      <div class="content">
+        <div class="date">2020.09</div>
+        <h3>初次相遇</h3>
+        <p>在那个秋日的午后，命运让我们相遇。</p>
+      </div>
+    </div>
+    <div class="timeline-item right">
+      <div class="content">
+        <div class="date">2021.03</div>
+        <h3>第一次约会</h3>
+        <p>一起看了场电影，紧张得手心都是汗。</p>
+      </div>
+    </div>
+    <div class="timeline-item left">
+      <div class="content">
+        <div class="date">2021.08</div>
+        <h3>在一起</h3>
+        <p>终于鼓起勇气说出了那句"在一起吧"。</p>
+      </div>
+    </div>
+    <div class="timeline-item right">
+      <div class="content">
+        <div class="date">2023.06</div>
+        <h3>步入婚姻</h3>
+        <p>在亲友的祝福下，我们许下了一生的承诺。</p>
+      </div>
+    </div>
+    <div class="timeline-item left">
+      <div class="content">
+        <div class="date">今天</div>
+        <h3>纪念日快乐</h3>
+        <p>感谢有你，每一天都是幸福的模样。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 第四屏：爱的留言板 -->
+<section class="message-section">
+  <div class="message-card">
+    <div class="envelope-icon">✉</div>
+    <h2>致最爱的人</h2>
+    <div class="message-content">
+      <p>从相识到相知，从相知到相爱，</p>
+      <p>每一天都因为有你而变得特别。</p>
+      <p>感谢你出现在我的生命里，</p>
+      <p>让我平凡的人生有了不平凡的色彩。</p>
+      <p class="signature">—— 永远爱你的我</p>
+    </div>
+  </div>
+</section>
+
+<!-- 第五屏：纪念日倒计时 -->
+<section class="countdown-section">
+  <h2>下一个纪念日</h2>
+  <div class="next-anniversary">
+    <div class="date-display">
+      <span class="month">06</span>
+      <span class="day">18</span>
+      <span class="year">2026</span>
+    </div>
+    <p class="countdown-label">距我们的三周年纪念日还有</p>
+    <div class="countdown-grid" id="countdown">
+      <div class="countdown-card">
+        <span class="number" id="cd-days">0</span>
+        <span class="label">天</span>
+      </div>
+      <div class="countdown-card">
+        <span class="number" id="cd-hours">0</span>
+        <span class="label">时</span>
+      </div>
+      <div class="countdown-card">
+        <span class="number" id="cd-minutes">0</span>
+        <span class="label">分</span>
+      </div>
+      <div class="countdown-card">
+        <span class="number" id="cd-seconds">0</span>
+        <span class="label">秒</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<audio id="bgMusic" loop preload="auto">
+  <source src="music/bg.mp3" type="audio/mpeg">
+</audio>
+<script src="js/script.js"></script>
+</body>
+</html>
