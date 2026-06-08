@@ -5,10 +5,7 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 设置静态文件目录
-app.use(express.static(path.join(__dirname)));
-
-// 默认路由 - 显示项目列表
+// 默认路由 - 显示项目列表（必须在静态文件中间件之前）
 app.get('/', (req, res) => {
   // 读取所有子目录作为项目列表
   const items = fs.readdirSync(__dirname);
@@ -83,7 +80,7 @@ app.get('/', (req, res) => {
   res.send(html);
 });
 
-// 为每个项目目录设置路由
+// 为每个项目目录设置路由（必须在静态文件中间件之前）
 const items = fs.readdirSync(__dirname);
 items.forEach(item => {
   const itemPath = path.join(__dirname, item);
@@ -102,9 +99,12 @@ items.forEach(item => {
   }
 });
 
+// 设置静态文件目录（放在路由之后）
+app.use(express.static(path.join(__dirname)));
+
 // 处理404错误
 app.use((req, res) => {
-  res.status(404).send('<h1>404 - 页面未找到</h1><p>请求的页面不存在。</p>');
+  res.status(404).send('<h1>404 - 页面未找到</h1><p>请求的页面不存在。</p><a href="/">返回首页</a>');
 });
 
 // 启动服务器
